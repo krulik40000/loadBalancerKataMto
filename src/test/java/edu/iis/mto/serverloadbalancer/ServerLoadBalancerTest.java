@@ -15,7 +15,7 @@ public class ServerLoadBalancerTest {
 
     @Test
     public void balancingServerWithNoVms_serverStaysEmpty() {
-        Server theServer = a(server().withCapacity(1));
+        Server theServer = a(ServerBuilder.server().withCapacity(1));
 
         balancing(aServerListWith(theServer), anEmptyListOfVms());
 
@@ -24,8 +24,9 @@ public class ServerLoadBalancerTest {
 
     @Test
     public void balancingOneServerWithOneSlotCapacity_andOneVm_fillsServerWithTheVm() {
-        Server theServer = a(server().withCapacity(1));
-        Vm theVm = a(vm().ofSize(1));
+        Server theServer = a(ServerBuilder.server().withCapacity(1));
+        Vm theVm = a(VmBuilder.vm()
+                              .ofSize(1));
         balancing(aServerListWith(theServer), aVmsListWith(theVm));
 
         assertThat(theServer, CurrentLoadPercentageMatcher.hasCurrentLoadOf(100.0d));
@@ -34,15 +35,6 @@ public class ServerLoadBalancerTest {
 
     private Vm[] aVmsListWith(Vm... vms) {
         return vms;
-    }
-
-    private Vm a(VmBuilder builder) {
-        return builder.build();
-    }
-
-    private VmBuilder vm() {
-        
-        return new VmBuilder();
     }
 
     private void balancing(Server[] servers, Vm[] vms) {
@@ -61,8 +53,9 @@ public class ServerLoadBalancerTest {
         return builder.build();
     }
 
-    private ServerBuilder server() {
-        return new ServerBuilder();
+    private <T> T a(Builder<T> builder){
+        return builder.build();
     }
+
 
 }
